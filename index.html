@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rifa Viaje · 11 Octubre 2026</title>
+<style>
+  :root{
+    --sky: #2f6690;
+    --sky-deep: #163a52;
+    --sun: #e8873a;
+    --sun-soft: #f4c98a;
+    --paper: #faf5ea;
+    --paper-dark: #efe4cc;
+    --ink: #1f2a30;
+    --sold: #b5473a;
+    --line: #d8c9a3;
+    --font-display: 'Copperplate', 'Trebuchet MS', 'Futura', sans-serif;
+    --font-body: 'Georgia', 'Iowan Old Style', serif;
+    --font-mono: 'Courier New', monospace;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,255,255,0.08), transparent 40%),
+      linear-gradient(180deg, var(--sky-deep) 0%, var(--sky) 45%, #4a8bb0 100%);
+    font-family: var(--font-body);
+    color: var(--ink);
+    padding: 32px 16px 80px;
+  }
+
+  .sky-deco{
+    position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0; opacity:0.5;
+  }
+  .cloud{fill:rgba(255,255,255,0.12);}
+
+  .wrap{ position:relative; z-index:1; max-width: 1100px; margin: 0 auto; }
+
+  header.ticket{
+    background: var(--paper);
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+    display:flex;
+    flex-wrap: wrap;
+    overflow:hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .ticket-main{ flex: 1 1 420px; padding: 30px 34px; position:relative; }
+
+  .eyebrow{
+    font-family: var(--font-mono);
+    letter-spacing: 3px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--sun);
+    font-weight:700;
+  }
+
+  h1{
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4.2vw, 46px);
+    margin: 6px 0 4px;
+    color: var(--sky-deep);
+    letter-spacing: 1px;
+    line-height:1.05;
+  }
+
+  .subtitle{ font-size: 15px; color: #5a6b74; margin-bottom: 18px; }
+
+  .route{ display:flex; align-items:center; gap:14px; margin-top: 18px; }
+  .route .dot{ width:9px;height:9px;border-radius:50%; background: var(--sun); flex-shrink:0; }
+  .route .line{
+    flex:1; height:1px;
+    background: repeating-linear-gradient(90deg, var(--sky) 0 6px, transparent 6px 12px);
+    position:relative;
+  }
+  .route .plane{ font-size:16px; transform: translateY(-9px); }
+  .route .dot.end{background: var(--sky-deep);}
+
+  .ticket-stub{
+    flex: 0 0 260px;
+    background: var(--sky-deep);
+    color: var(--paper);
+    padding: 30px 28px;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    justify-content: space-between;
+    border-left: 2px dashed rgba(255,255,255,0.25);
+  }
+  .ticket-stub::before, .ticket-stub::after{
+    content:""; position:absolute; width:22px;height:22px;
+    background: var(--sky); border-radius:50%; left:-11px;
+  }
+  .ticket-stub::before{top:-11px;}
+  .ticket-stub::after{bottom:-11px;}
+
+  .stub-label{
+    font-family: var(--font-mono); font-size: 11px; letter-spacing:2px;
+    text-transform: uppercase; opacity:0.65; margin-bottom:2px;
+  }
+  .stub-value{ font-family: var(--font-display); font-size: 20px; margin-bottom: 16px; letter-spacing: 1px; }
+
+  .controls{
+    display:flex; flex-wrap:wrap; gap:14px; align-items:center;
+    justify-content: space-between; margin: 26px 0 18px; color: var(--paper);
+  }
+
+  .legend{ display:flex; gap:18px; flex-wrap:wrap; font-size: 13px; font-family: var(--font-mono); }
+  .legend span{ display:inline-flex; align-items:center; gap:7px; }
+  .swatch{ width:14px;height:14px; border-radius:3px; display:inline-block; }
+  .swatch.free{ background: var(--paper); border:1px solid var(--line);}
+  .swatch.sold{ background: var(--sold);}
+
+  .stats{
+    font-family: var(--font-mono); font-size: 13px;
+    background: rgba(255,255,255,0.12); padding: 8px 16px;
+    border-radius: 20px; backdrop-filter: blur(2px);
+  }
+  .stats b{color: var(--sun-soft);}
+
+  .admin-area{ display:flex; align-items:center; gap:10px; }
+
+  .btn{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    background: transparent;
+    color: var(--paper);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 8px 14px;
+    border-radius: 20px;
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .btn:hover{ background: rgba(255,255,255,0.15); border-color: var(--paper); }
+  .btn.danger{ border-color: var(--sold); color: #ffd9d3; }
+  .btn.danger:hover{ background: rgba(181,71,58,0.25); }
+
+  .admin-badge{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--sun);
+    color: var(--sky-deep);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-weight: 700;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 10px;
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+  }
+
+  .num{
+    aspect-ratio: 1;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: clamp(14px, 2.2vw, 18px);
+    color: var(--sky-deep);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:default;
+    user-select:none;
+    position:relative;
+    transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+  }
+
+  body.admin-mode .num{ cursor:pointer; }
+  body.admin-mode .num:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(22,58,82,0.18);
+    border-color: var(--sky);
+  }
+  .num:focus-visible{ outline: 2px solid var(--sun); outline-offset: 2px; }
+
+  .num.sold{
+    background: var(--sold);
+    color: #fff8ef;
+    border-color: var(--sold);
+  }
+  .num.sold::after{
+    content:"VENDIDO";
+    position:absolute;
+    bottom:2px;
+    font-size: 6px;
+    letter-spacing: 0.5px;
+    font-family: var(--font-mono);
+    opacity: 0.85;
+  }
+  body.admin-mode .num.sold:hover{ transform: none; box-shadow: none; opacity: 0.85; }
+
+  footer{
+    text-align:center;
+    color: rgba(255,255,255,0.75);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin-top: 26px;
+    letter-spacing: 0.5px;
+  }
+
+  .toast{
+    position: fixed; bottom: 22px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--sky-deep); color: var(--paper);
+    padding: 10px 20px; border-radius: 24px;
+    font-family: var(--font-mono); font-size: 13px;
+    opacity: 0; pointer-events:none;
+    transition: opacity .2s ease, transform .2s ease;
+    z-index: 20;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    max-width: 90vw;
+    text-align:center;
+  }
+  .toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .modal-overlay{
+    position:fixed; inset:0;
+    background: rgba(9,20,28,0.65);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 30;
+    padding: 16px;
+  }
+  .modal-overlay.show{ display:flex; }
+
+  .modal{
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 28px;
+    width: 100%;
+    max-width: 340px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  }
+  .modal h2{
+    font-family: var(--font-display);
+    color: var(--sky-deep);
+    margin: 0 0 4px;
+    font-size: 20px;
+  }
+  .modal p.hint{ font-size: 12px; color:#6a7a82; margin: 0 0 18px; }
+  .modal label{
+    display:block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--sky-deep);
+    margin-bottom: 4px;
+  }
+  .modal input{
+    width:100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    margin-bottom: 14px;
+    background: #fff;
+  }
+  .modal input:focus{ outline: none; border-color: var(--sky); }
+  .modal-actions{ display:flex; gap:10px; margin-top: 6px; }
+  .modal-actions button{
+    flex:1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor:pointer;
+    letter-spacing: 0.5px;
+  }
+  .modal-actions .primary{ background: var(--sky-deep); color: var(--paper); }
+  .modal-actions .primary:hover{ background: var(--sky); }
+  .modal-actions .secondary{ background: var(--paper-dark); color: var(--ink); }
+  .modal-actions .secondary:hover{ background: var(--line); }
+  .modal-error{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--sold);
+    margin: -8px 0 12px;
+    min-height: 14px;
+  }
+
+  .conn-status{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    text-align:center;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 520px){
+    .ticket-stub{border-left:none; border-top: 2px dashed rgba(255,255,255,0.25);}
+    .ticket-stub::before, .ticket-stub::after{display:none;}
+    .grid{grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));}
+    .controls{ flex-direction:column; align-items:stretch; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sky-deco">
+  <svg width="100%" height="100%">
+    <ellipse class="cloud" cx="10%" cy="8%" rx="90" ry="26"/>
+    <ellipse class="cloud" cx="85%" cy="16%" rx="120" ry="30"/>
+    <ellipse class="cloud" cx="55%" cy="4%" rx="70" ry="20"/>
+  </svg>
+</div>
+
+<div class="wrap">
+
+  <header class="ticket">
+    <div class="ticket-main">
+      <div class="eyebrow">Boleto de Rifa</div>
+      <h1>Rifa · Viaje Soñado</h1>
+      <div class="subtitle">Elegí tu número</div>
+      <div class="route">
+        <div class="dot"></div>
+        <div class="line"><span class="plane">✈</span></div>
+        <div class="dot end"></div>
+      </div>
+    </div>
+    <div class="ticket-stub">
+      <div>
+        <div class="stub-label">Fecha del sorteo</div>
+        <div class="stub-value">11 Oct 2026</div>
+        <div class="stub-label">Números</div>
+        <div class="stub-value">00 — 100</div>
+      </div>
+      <div>
+        <div class="stub-label">Válido para</div>
+        <div class="stub-value">2 pasajeros</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="legend">
+      <span><span class="swatch free"></span> Disponible</span>
+      <span><span class="swatch sold"></span> Vendido</span>
+    </div>
+    <div class="stats" id="stats">Cargando…</div>
+    <div class="admin-area" id="adminArea">
+      <button class="btn" id="loginBtnInit">Acceso administrador</button>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="conn-status" id="connStatus"></div>
+
+  <footer>RIFA VIAJE · SORTEO 11 DE OCTUBRE 2026</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <h2>Acceso administrador</h2>
+    <p class="hint">Iniciá sesión para marcar o desmarcar números vendidos.</p>
+    <label for="email">Email</label>
+    <input type="email" id="email" autocomplete="username" placeholder="admin@correo.com">
+    <label for="password">Contraseña</label>
+    <input type="password" id="password" autocomplete="current-password" placeholder="••••••••">
+    <div class="modal-error" id="loginError"></div>
+    <div class="modal-actions">
+      <button class="secondary" id="cancelLogin">Cancelar</button>
+      <button class="primary" id="submitLogin">Ingresar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK (compat, sin build step, ideal para GitHub Pages) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+  /* =========================================================
+     CONFIGURACIÓN DE FIREBASE
+     Reemplazá estos valores por los de TU proyecto de Firebase.
+     Consola Firebase > Configuración del proyecto > Tus apps > SDK config
+     ========================================================= */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFMjThwA8QstYdFtpbWHcZQxEMFGnF-P4",
+    authDomain: "rifa-11-octubre.firebaseapp.com",
+    databaseURL: "https://TU_PROYECTO-default-rtdb.firebaseio.com",
+    projectId: "rifa-11-octubre",
+    storageBucket: "rifa-11-octubre.firebasestorage.app",
+    messagingSenderId: "141330577562",
+    appId: "1:141330577562:web:bc5f544355db92ac0b8723"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+  const soldRef = db.ref('sold'); // estructura: sold/{numero} = true
+
+  const TOTAL = 101; // 00 a 100
+
+  const grid = document.getElementById('grid');
+  const statsEl = document.getElementById('stats');
+  const toastEl = document.getElementById('toast');
+  const adminArea = document.getElementById('adminArea');
+  const loginModal = document.getElementById('loginModal');
+  const cancelLogin = document.getElementById('cancelLogin');
+  const submitLogin = document.getElementById('submitLogin');
+  const loginError = document.getElementById('loginError');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const connStatus = document.getElementById('connStatus');
+
+  let soldSet = new Set();
+  let cells = [];
+  let isAdmin = false;
+
+  function pad(n){ return n.toString().padStart(2,'0'); }
+
+  function buildGrid(){
+    for(let i=0;i<TOTAL;i++){
+      const cell = document.createElement('div');
+      cell.className = 'num';
+      cell.textContent = pad(i);
+      cell.dataset.n = i;
+      cell.tabIndex = 0;
+      cell.setAttribute('role','button');
+      cell.setAttribute('aria-pressed','false');
+      cell.addEventListener('click', () => onCellClick(i));
+      cell.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); onCellClick(i); }
+      });
+      grid.appendChild(cell);
+      cells[i] = cell;
+    }
+  }
+
+  function updateStats(){
+    statsEl.innerHTML = `<b>${soldSet.size}</b> / ${TOTAL} vendidos · <b>${TOTAL - soldSet.size}</b> disponibles`;
+  }
+
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=> toastEl.classList.remove('show'), 1800);
+  }
+
+  function render(){
+    cells.forEach((cell, i) => {
+      const isSold = soldSet.has(i);
+      cell.classList.toggle('sold', isSold);
+      cell.setAttribute('aria-pressed', isSold ? 'true' : 'false');
+    });
+    updateStats();
+  }
+
+  function onCellClick(i){
+    if(!isAdmin){
+      showToast('Solo el administrador puede marcar números');
+      return;
+    }
+    const wasSold = soldSet.has(i);
+    const action = wasSold
+      ? soldRef.child(String(i)).remove()
+      : soldRef.child(String(i)).set(true);
+
+    action.catch((err) => {
+      console.error('Error al guardar en Firebase:', err);
+      showToast('Error al guardar: ' + err.message);
+    });
+    // No actualizamos soldSet localmente: el listener en tiempo real
+    // de Firebase lo hace por nosotros para todos los que estén viendo.
+  }
+
+  // Escucha en tiempo real: todos los visitantes ven los mismos cambios al instante
+  soldRef.on('value', (snapshot) => {
+    const data = snapshot.val() || {};
+    soldSet = new Set(Object.keys(data).map(Number));
+    render();
+    connStatus.textContent = '';
+  }, (error) => {
+    connStatus.textContent = 'No se pudo conectar a la base de datos. Revisá la configuración de Firebase.';
+    console.error(error);
+  });
+
+  // ---- Autenticación ----
+  function openModal(){
+    loginError.textContent = '';
+    emailInput.value = '';
+    passwordInput.value = '';
+    loginModal.classList.add('show');
+    emailInput.focus();
+  }
+  function closeModal(){ loginModal.classList.remove('show'); }
+
+  document.getElementById('loginBtnInit').addEventListener('click', openModal);
+  cancelLogin.addEventListener('click', closeModal);
+  loginModal.addEventListener('click', (e) => { if(e.target === loginModal) closeModal(); });
+
+  submitLogin.addEventListener('click', doLogin);
+  passwordInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') doLogin(); });
+
+  function doLogin(){
+    const email = emailInput.value.trim();
+    const pass = passwordInput.value;
+    if(!email || !pass){
+      loginError.textContent = 'Completá email y contraseña.';
+      return;
+    }
+    submitLogin.disabled = true;
+    submitLogin.textContent = 'Ingresando…';
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(() => {
+        closeModal();
+        showToast('Sesión de administrador iniciada');
+      })
+      .catch((err) => {
+        loginError.textContent = 'Email o contraseña incorrectos.';
+        console.error(err);
+      })
+      .finally(() => {
+        submitLogin.disabled = false;
+        submitLogin.textContent = 'Ingresar';
+      });
+  }
+
+  function doLogout(){
+    auth.signOut().then(() => showToast('Sesión cerrada'));
+  }
+
+  // Firebase Auth mantiene la sesión guardada entre visitas (persistencia local
+  // por defecto): si el admin ya inició sesión antes, sigue conectado la
+  // próxima vez que abra la página, sin volver a loguearse.
+  auth.onAuthStateChanged((user) => {
+    isAdmin = !!user;
+    document.body.classList.toggle('admin-mode', isAdmin);
+    adminArea.innerHTML = '';
+    if(isAdmin){
+      const badge = document.createElement('span');
+      badge.className = 'admin-badge';
+      badge.textContent = 'ADMIN: ' + user.email;
+      const logoutBtn = document.createElement('button');
+      logoutBtn.className = 'btn danger';
+      logoutBtn.textContent = 'Cerrar sesión';
+      logoutBtn.addEventListener('click', doLogout);
+      adminArea.appendChild(badge);
+      adminArea.appendChild(logoutBtn);
+    } else {
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = 'Acceso administrador';
+      btn.addEventListener('click', openModal);
+      adminArea.appendChild(btn);
+    }
+  });
+
+  buildGrid();
+</script>
+
+</body>
+</html>
