@@ -370,7 +370,7 @@
         <div class="stub-label">Fecha del sorteo</div>
         <div class="stub-value">11 Oct 2026</div>
         <div class="stub-label">Números</div>
-        <div class="stub-value">00 — 100</div>
+        <div class="stub-value">00 — 99</div>
       </div>
       <div>
         <div class="stub-label">Válido para</div>
@@ -463,7 +463,7 @@
   const db = firebase.database();
   const soldRef = db.ref('sold'); // estructura: sold/{numero} = { name, paid }
 
-  const TOTAL = 101; // 00 a 100
+  const TOTAL = 101; // 00 a 99
 
   const grid = document.getElementById('grid');
   const statsEl = document.getElementById('stats');
